@@ -1,22 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ContactForm } from "./components/ContactForm";
 import { PartnerLogo } from "./components/PartnerLogo";
+
+const PRODUCTS = [
+  {
+    name: "SGA Agro",
+    description:
+      "Sistema de gestão agrícola com controle de perdas e qualidade do plantio.",
+    href: "https://sgaagro.com.br",
+    logoPath: "/images/SGA_logo.png",
+  },
+  // Adicione aqui novos produtos desenvolvidos pela Pilar Tec
+] as const;
 
 const PARTNERS = [
   {
     name: "Cronoar",
     href: "https://cronoar.com.br",
-    logoPath: "/images/cronoar.png",
+    logoPath: "/images/empresasParceiras/cronoar.png",
   },
   {
     name: "Domdchef",
     href: null,
-    logoPath: "/images/domdchef.png",
+    logoPath: "/images/empresasParceiras/domdchef.png",
   },
   {
-    name: "SGA Agro",
-    href: "https://sgaagro.com.br",
-    logoPath: "/images/sgaagro.png",
+    name: "Monte Alegre",
+    href: null,
+    logoPath: "/images/empresasParceiras/montealegre.png",
   },
 ] as const;
 
@@ -24,7 +36,7 @@ const SERVICES = [
   {
     title: "Nossos SaaS",
     description:
-      "Soluções em nuvem prontas para escalar seu negócio. Conheça o SGA Agro e outras ferramentas desenvolvidas pela Pilar Tec.",
+      "Soluções em nuvem prontas para escalar seu negócio. Conheça nossos produtos na seção abaixo.",
     icon: "☁️",
   },
   {
@@ -45,11 +57,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      <header className="sticky top-0 z-50 border-b border-slate-800 bg-black">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded-lg">
+          <Link href="/" className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded-lg">
             <Image
-              src="/images/pilartec-logo.svg"
+              src="/images/LOGOPILARTECBRANCA.png"
               alt="Pilar Tec"
               width={140}
               height={36}
@@ -60,19 +72,25 @@ export default function Home() {
           <nav className="flex items-center gap-6 text-sm font-medium">
             <a
               href="#servicos"
-              className="text-slate-600 transition hover:text-slate-900"
+              className="text-slate-300 transition hover:text-white"
             >
               Serviços
             </a>
             <a
+              href="#produtos"
+              className="text-slate-300 transition hover:text-white"
+            >
+              Nossos produtos
+            </a>
+            <a
               href="#parceiros"
-              className="text-slate-600 transition hover:text-slate-900"
+              className="text-slate-300 transition hover:text-white"
             >
               Parceiros
             </a>
             <a
               href="#contato"
-              className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-800"
+              className="rounded-full bg-white px-4 py-2 text-black transition hover:bg-slate-200"
             >
               Fale conosco
             </a>
@@ -89,8 +107,8 @@ export default function Home() {
                 Software que sustenta o seu negócio
               </h1>
               <p className="mt-5 text-lg text-slate-600 sm:text-xl">
-                Criamos SaaS, sistemas sob medida e landing pages. Somos a base
-                técnica de marcas que já confiam no nosso trabalho.
+                Somos uma empresa de tecnologia. Desenvolvemos SaaS, sistemas sob
+                medida e landing pages para marcas que confiam no nosso trabalho.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
@@ -139,6 +157,54 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Conheça nossos produtos */}
+        <section
+          id="produtos"
+          className="border-t border-slate-200 bg-slate-50 py-16 sm:py-24"
+        >
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <h2 className="text-center text-3xl font-bold text-slate-900 sm:text-4xl">
+              Conheça nossos produtos
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-slate-600">
+              SaaS desenvolvidos pela Pilar Tec para escalar seu negócio.
+            </p>
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {PRODUCTS.map((product) => (
+                <article
+                  key={product.name}
+                  className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+                >
+                  <div className="relative flex h-14 w-full items-center justify-center">
+                    <Image
+                      src={product.logoPath}
+                      alt={`Logo ${product.name}`}
+                      width={120}
+                      height={56}
+                      className="object-contain object-center"
+                      unoptimized
+                    />
+                  </div>
+                  <h3 className="mt-4 text-xl font-semibold text-slate-900">
+                    {product.name}
+                  </h3>
+                  <p className="mt-2 flex-1 text-slate-600">
+                    {product.description}
+                  </p>
+                  <a
+                    href={product.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                  >
+                    Conhecer
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Parceiros */}
         <section
           id="parceiros"
@@ -165,7 +231,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* Contato */}
         <section
           id="contato"
           className="border-t border-slate-200 bg-slate-900 py-16 text-white sm:py-24"
@@ -177,20 +243,32 @@ export default function Home() {
             <p className="mt-4 text-lg text-slate-300">
               Conte sua ideia. A gente cuida da parte técnica.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <div className="mt-10">
+              <ContactForm />
+            </div>
+            <p className="mt-6 text-sm text-slate-400">Ou entre em contato direto:</p>
+            <div className="mt-3 flex flex-wrap justify-center gap-4">
               <a
-                href="mailto:contato@pilartec.com.br"
-                className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-medium text-slate-900 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
+                href="mailto:pilartec.startup@gmail.com"
+                className="inline-flex items-center justify-center rounded-full border border-slate-500 px-6 py-3 text-base font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
               >
-                contato@pilartec.com.br
+                pilartec.startup@gmail.com
               </a>
               <a
-                href="https://wa.me/5511999999999"
+                href="https://wa.me/556493247562?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20servi%C3%A7os%20da%20Pilar%20Tec."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-slate-500 px-6 py-3 text-base font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
               >
                 WhatsApp
+              </a>
+              <a
+                href="https://www.instagram.com/pilar.tec/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-full border border-slate-500 px-6 py-3 text-base font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+              >
+                Instagram
               </a>
             </div>
           </div>
@@ -198,20 +276,30 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50 py-8">
+      <footer className="border-t border-slate-800 bg-black py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
-          <Link href="/" className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 rounded">
+          <Link href="/" className="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded">
             <Image
-              src="/images/pilartec-logo.svg"
+              src="/images/LOGOPILARTECBRANCA.png"
               alt="Pilar Tec"
               width={120}
               height={30}
               className="h-8 w-auto opacity-90"
             />
           </Link>
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} Pilar Tec. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
+            <a
+              href="https://www.instagram.com/pilar.tec/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-slate-400 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded"
+            >
+              Instagram
+            </a>
+            <p className="text-sm text-slate-400">
+              © {new Date().getFullYear()} Pilar Tec. Todos os direitos reservados.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
