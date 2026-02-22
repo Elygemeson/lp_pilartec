@@ -12,11 +12,11 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { name, email, phone, reason, message } = body;
+    const { name, email, empresa, reason, message } = body;
 
-    if (!name?.trim() || !email?.trim() || !message?.trim() || !reason?.trim()) {
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
       return NextResponse.json(
-        { error: "Nome, e-mail, motivo de contato e mensagem são obrigatórios." },
+        { error: "Nome, e-mail e mensagem são obrigatórios." },
         { status: 400 }
       );
     }
@@ -24,8 +24,8 @@ export async function POST(request: Request) {
     const fields: { name: string; value: string; inline?: boolean }[] = [
       { name: "Nome", value: name.trim(), inline: true },
       { name: "E-mail", value: email.trim(), inline: true },
-      { name: "Número", value: phone?.trim() || "—", inline: true },
-      { name: "Motivo de contato", value: reason.trim(), inline: true },
+      { name: "Empresa", value: empresa?.trim() || "—", inline: true },
+      { name: "Serviço de interesse", value: reason?.trim() || "—", inline: true },
       { name: "Mensagem", value: message.trim(), inline: false },
     ];
 
