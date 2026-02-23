@@ -478,11 +478,11 @@ export default function Home() {
         @keyframes svc-circuit-flow{ from{ stroke-dashoffset:0; } to{ stroke-dashoffset:32; } }
         @keyframes svc-circuit-pulse{ 0%,100%{ opacity:0.4; } 50%{ opacity:1; } }
 
-        .contact-bg-stream{ background-image:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(34,197,94,0.03) 2px, rgba(34,197,94,0.03) 3px); background-size:100% 60px; animation:contact-stream 20s linear infinite; }
-        @keyframes contact-stream{ from{ background-position:0 0; } to{ background-position:0 60px; } }
+        /* Contato: fundos estáticos (sem animação) para melhor performance */
+        .contact-bg-stream{ background-image:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(34,197,94,0.03) 2px, rgba(34,197,94,0.03) 3px); background-size:100% 60px; }
         .contact-bg-grid{ background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size:56px 56px; }
-        .contact-bg-dot{ background-image:radial-gradient(circle, rgba(34,197,94,0.12) 1px, transparent 1px); background-size:24px 24px; animation:contact-dot-pulse 4s ease-in-out infinite; }
-        @keyframes contact-dot-pulse{ 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
+        .contact-bg-dot{ background-image:radial-gradient(circle, rgba(34,197,94,0.12) 1px, transparent 1px); background-size:24px 24px; }
+        .section-contato{ contain:layout style paint; }
 
         .whatsapp-float{
           position:fixed;bottom:24px;right:24px;z-index:90;
@@ -548,6 +548,10 @@ export default function Home() {
           .contact-form-grid{ grid-template-columns:1fr !important; }
           .contact-form-wrap{ padding:24px !important; }
           .section-contato{ padding:48px 16px !important; }
+          /* Contato mobile: esconder fundos decorativos (grid/listras/pontos) para aliviar GPU */
+          .section-contato .contact-bg-grid,
+          .section-contato .contact-bg-stream,
+          .section-contato .contact-bg-dot{ display:none !important; }
           .section-produtos{ padding:48px 16px !important; }
           .carousel-track{ animation-duration:35s; }
         }
@@ -783,10 +787,10 @@ export default function Home() {
             <h2 className="fd" style={{ fontSize:'clamp(24px,3vw,34px)',fontWeight:700,letterSpacing:'-0.02em',marginBottom:10 }}>Marcas que confiam na Pilar Tec</h2>
             <p style={{ color:'#555',fontSize:15,maxWidth:400,lineHeight:1.6 }}>Empresas que contam com a nossa tecnologia para software e presença digital.</p>
           </div>
-          <div style={{ overflow:'hidden',maskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',WebkitMaskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',contain:'layout style' }}>
+          <div className="carousel-wrap" style={{ overflow:'hidden',maskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',WebkitMaskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',contain:'layout style' }}>
             <div className="carousel-track">
               {[...PARTNERS,...PARTNERS].map((p,i)=>(
-                <div key={i} style={{
+                <div key={i} className="carousel-item" style={{
                   background:'#111',border:'1px solid rgba(255,255,255,0.07)',
                   borderRadius:12,padding:'22px 36px',
                   display:'flex',alignItems:'center',justifyContent:'center',
