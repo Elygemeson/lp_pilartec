@@ -99,13 +99,25 @@ function Card3D({ children, className = "", style = {} }: { children: React.Reac
   );
 }
 
+const NAV_LINKS = [['#servicos', 'Serviços'], ['#produtos', 'Produtos'], ['#parceiros', 'Parceiros']] as const;
+
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', fn);
+    window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
+
+  useEffect(() => {
+    if (menuOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="header-outer" style={{ position: 'fixed', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 100, width: 'calc(100% - 40px)', maxWidth: 1060 }}>
@@ -123,23 +135,157 @@ function NavBar() {
           <span className="fd nav-logo-txt" style={{ fontSize: 16, fontWeight: 600, letterSpacing: '-0.02em' }}>Pilar Tec</span>
         </Link>
 
-        <nav style={{
-          display: 'flex', gap: 2,
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 4, padding: '4px',
-        }}>
-          {[['#servicos','Serviços'],['#produtos','Produtos'],['#parceiros','Parceiros']].map(([href, label]) => (
-            <a key={href} href={href} className="nav-pill">{label}</a>
-          ))}
-        </nav>
+        {/* Desktop: nav + CTA */}
+        <div className="navbar-desktop" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <nav style={{
+            display: 'flex', gap: 2,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 4, padding: '4px',
+          }}>
+            {NAV_LINKS.map(([href, label]) => (
+              <a key={href} href={href} className="nav-pill">{label}</a>
+            ))}
+          </nav>
+          <a href="#contato" className="btn-cta">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+            </svg>
+            Fale conosco
+          </a>
+        </div>
 
-        <a href="#contato" className="btn-cta">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-          </svg>
-          Fale conosco
-        </a>
+        {/* Mobile: hamburger */}
+        <button
+          type="button"
+          className="navbar-mobile-btn"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          style={{
+            display: 'none',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 44,
+            height: 44,
+            padding: 0,
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 6,
+            background: 'rgba(255,255,255,0.05)',
+            color: '#fff',
+            cursor: 'pointer',
+          }}
+        >
+          {menuOpen ? (
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Overlay mobile menu - backdrop atrás (z0), conteúdo na frente (z2) com botões visíveis */}
+      <div
+        className="navbar-mobile-menu"
+        aria-hidden={!menuOpen}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 101,
+          visibility: menuOpen ? 'visible' : 'hidden',
+          opacity: menuOpen ? 1 : 0,
+          transition: 'visibility 0.25s, opacity 0.25s',
+        }}
+      >
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={closeMenu}
+          onKeyDown={(e) => e.key === 'Escape' && closeMenu()}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(6px)',
+          }}
+        />
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            width: '100%',
+            height: '100%',
+            paddingTop: 'max(env(safe-area-inset-top), 24px)',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 24px)',
+            paddingLeft: 24,
+            paddingRight: 24,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <button
+            type="button"
+            onClick={closeMenu}
+            className="navbar-mobile-close-btn"
+            aria-label="Fechar menu"
+            style={{
+              position: 'absolute',
+              top: 'max(env(safe-area-inset-top), 24px)',
+              right: 24,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '10px 16px',
+              border: '1px solid rgba(255,255,255,0.25)',
+              borderRadius: 8,
+              background: '#000',
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Fechar
+          </button>
+          <div
+            className="navbar-mobile-buttons"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              width: '100%',
+              maxWidth: 280,
+              marginTop: 70,
+              flexShrink: 0,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {NAV_LINKS.map(([href, label]) => (
+              <a key={href} href={href} className="nav-pill nav-pill-mobile" onClick={closeMenu}>
+                {label}
+              </a>
+            ))}
+            <a href="#contato" className="btn-cta btn-cta-mobile" onClick={closeMenu}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+              </svg>
+              Fale conosco
+            </a>
+          </div>
+        </div>
       </div>
     </header>
   );
@@ -349,15 +495,51 @@ export default function Home() {
         }
         .whatsapp-float:hover{ transform:scale(1.08); box-shadow:0 6px 28px rgba(37,211,102,0.55); }
 
+        .navbar-mobile-btn{ display:none !important; }
+        .navbar-mobile-menu{ pointer-events:none; }
+        .navbar-mobile-menu[aria-hidden="false"]{ pointer-events:auto; }
+        .navbar-mobile-buttons{ visibility:visible !important; opacity:1 !important; }
+        .navbar-mobile-buttons .nav-pill-mobile,
+        .navbar-mobile-buttons .btn-cta-mobile{ visibility:visible !important; opacity:1 !important; display:flex !important; }
+        .navbar-mobile-buttons .nav-pill-mobile{ display:block !important; }
+        .navbar-mobile-close-btn:hover{ background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.35); }
+        .navbar-mobile-close-btn:active{ background:rgba(255,255,255,0.2); }
+        .nav-pill-mobile{
+          display:block; text-align:left; border-radius:10px;
+          padding:14px 18px !important; font-size:15px !important; font-weight:600;
+          color:#fff !important; background:#000 !important;
+          border:1px solid rgba(255,255,255,0.25);
+          text-decoration:none; transition:background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .nav-pill-mobile:hover{ background:#111 !important; border-color:rgba(255,255,255,0.4); color:#fff !important; }
+        .btn-cta-mobile{
+          margin-top:16px; padding:14px 20px !important; font-size:15px !important; font-weight:700;
+          justify-content:center; border-width:2px;
+          background:#000 !important; color:#fff !important;
+          border:1px solid rgba(255,255,255,0.3) !important;
+          box-shadow:0 4px 16px rgba(0,0,0,0.3) !important;
+        }
+        .btn-cta-mobile:hover{ background:#111 !important; border-color:rgba(255,255,255,0.5) !important; box-shadow:0 6px 24px rgba(0,0,0,0.4) !important; }
+
+        /* Otimização mobile: circuito hero estático (sem animação/blur) para evitar travamentos */
         @media (max-width: 768px){
-          .navbar-wrap{ flex-wrap:wrap; gap:10px; padding:8px 12px !important; }
+          .hero-circuit-glow,.hero-circuit-line,.hero-circuit-pad{ animation:none !important; }
+          .hero-circuit-glow{ filter:none !important; opacity:0.7; }
+          .hero-circuit-svg{ contain:strict; }
+        }
+        /* Carrossel: camada GPU e contain para menos repaint */
+        .carousel-track{
+          will-change:transform;
+          backface-visibility:hidden;
+          contain:layout style;
+        }
+        @media (max-width: 768px){
+          .navbar-mobile-btn{ display:flex !important; }
+          .navbar-desktop{ display:none !important; }
+          .navbar-wrap{ padding:10px 14px !important; flex-wrap:nowrap; }
           .navbar-wrap .nav-logo-txt{ font-size:0; }
-          .navbar-wrap .nav-logo-txt img{ height:30px !important; }
-          .navbar-wrap nav{ flex-wrap:wrap; padding:3px !important; }
-          .navbar-wrap .nav-pill{ padding:6px 10px; font-size:12px; }
-          .navbar-wrap .btn-cta{ padding:8px 14px; font-size:12px; }
-          .navbar-wrap .btn-cta svg{ width:12px; height:12px; }
           .header-outer{ width:calc(100% - 24px) !important; top:10px !important; }
+          .hero-grid{ padding-top:88px !important; }
           .product-card-grid{ grid-template-columns:1fr !important; }
           .product-card-grid .product-card-text{ padding:28px 20px !important; }
           .product-card-grid .product-card-logo{ border-left:none !important; border-top:1px solid rgba(255,255,255,0.05) !important; padding:28px 20px !important; min-height:200px; }
@@ -367,6 +549,7 @@ export default function Home() {
           .contact-form-wrap{ padding:24px !important; }
           .section-contato{ padding:48px 16px !important; }
           .section-produtos{ padding:48px 16px !important; }
+          .carousel-track{ animation-duration:35s; }
         }
       `}</style>
 
@@ -387,14 +570,18 @@ export default function Home() {
             boxSizing: 'border-box',
           }}
         >
-          {/* Banner de fundo (imagem da pasta images, semi-transparente) */}
-          <div style={{
-            position:'absolute',inset:0,pointerEvents:'none',
-            backgroundImage:'url(/images/banner.png)',
-            backgroundSize:'cover',
-            backgroundPosition:'center',
-            opacity:0.04,
-          }}/>
+          {/* Banner de fundo (imagem otimizada pelo Next, semi-transparente) */}
+          <div style={{ position:'absolute',inset:0,pointerEvents:'none',overflow:'hidden' }}>
+            <Image
+              src="/images/banner.png"
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="hero-bg-img"
+              style={{ objectFit:'cover',objectPosition:'center',opacity:0.04 }}
+              loading="lazy"
+            />
+          </div>
           <div style={{
             position:'absolute',inset:0,pointerEvents:'none',
             background:'radial-gradient(ellipse 55% 60% at 15% 60%,rgba(34,197,94,0.1) 0%,transparent 65%), radial-gradient(ellipse 45% 50% at 85% 35%,rgba(59,130,246,0.08) 0%,transparent 65%)',
@@ -596,7 +783,7 @@ export default function Home() {
             <h2 className="fd" style={{ fontSize:'clamp(24px,3vw,34px)',fontWeight:700,letterSpacing:'-0.02em',marginBottom:10 }}>Marcas que confiam na Pilar Tec</h2>
             <p style={{ color:'#555',fontSize:15,maxWidth:400,lineHeight:1.6 }}>Empresas que contam com a nossa tecnologia para software e presença digital.</p>
           </div>
-          <div style={{ overflow:'hidden',maskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',WebkitMaskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)' }}>
+          <div style={{ overflow:'hidden',maskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',WebkitMaskImage:'linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%)',contain:'layout style' }}>
             <div className="carousel-track">
               {[...PARTNERS,...PARTNERS].map((p,i)=>(
                 <div key={i} style={{
@@ -607,9 +794,9 @@ export default function Home() {
                 }}>
                   {p.href
                     ? <a href={p.href} target="_blank" rel="noopener noreferrer" style={{ display:'flex' }}>
-                        <Image src={p.logoPath} alt={p.name} width={150} height={58} style={{ maxHeight:50,width:'auto',objectFit:'contain' }} unoptimized/>
+                        <Image src={p.logoPath} alt={p.name} width={150} height={58} sizes="(max-width: 768px) 100px, 150px" style={{ maxHeight:50,width:'auto',objectFit:'contain' }} loading="lazy" />
                       </a>
-                    : <Image src={p.logoPath} alt={p.name} width={150} height={58} style={{ maxHeight:50,width:'auto',objectFit:'contain' }} unoptimized/>
+                    : <Image src={p.logoPath} alt={p.name} width={150} height={58} sizes="(max-width: 768px) 100px, 150px" style={{ maxHeight:50,width:'auto',objectFit:'contain' }} loading="lazy" />
                   }
                 </div>
               ))}
